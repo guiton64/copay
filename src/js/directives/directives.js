@@ -15,8 +15,9 @@ function selectText(element) {
 
   }
 }
+
 angular.module('copayApp.directives')
-.directive('validAddress', ['$rootScope', 'bitcore', 'profileService',
+  .directive('validAddress', ['$rootScope', 'bitcore', 'profileService',
     function($rootScope, bitcore, profileService) {
       return {
         require: 'ngModel',
@@ -37,7 +38,7 @@ angular.module('copayApp.directives')
             if (/^bitcoin:/.test(value)) {
               var uri, isAddressValid;
               var isUriValid = URI.isValid(value);
-              if (isUriValid) { 
+              if (isUriValid) {
                 uri = new URI(value);
                 isAddressValid = Address.isValid(uri.address.toString(), networkName)
               }
@@ -324,3 +325,15 @@ angular.module('copayApp.directives')
       templateUrl: 'views/includes/available-balance.html'
     }
   });
+  .directive('autofocus', ['$timeout',
+    function($timeout) {
+      return {
+        restrict: 'A',
+        link: function($scope, $element) {
+          $timeout(function() {
+            $element[0].focus();
+          });
+        }
+      }
+    }
+  ]);
