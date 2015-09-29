@@ -9,6 +9,8 @@ angular.module('copayApp.controllers').controller('passwordController',
 
     self.isVerification = false;
 
+    document.getElementById("passwordInput").focus();
+
     self.close = function(cb) {
       return cb('No password given');
     };
@@ -17,6 +19,7 @@ angular.module('copayApp.controllers').controller('passwordController',
       self.error = false;
 
       if (isSetup && !self.isVerification) {
+        document.getElementById("passwordInput").focus();
         self.isVerification = true;
         pass1 = self.password;
         self.password = null;

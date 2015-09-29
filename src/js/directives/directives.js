@@ -325,15 +325,3 @@ angular.module('copayApp.directives')
       templateUrl: 'views/includes/available-balance.html'
     }
   });
-  .directive('autofocus', ['$timeout',
-    function($timeout) {
-      return {
-        restrict: 'A',
-        link: function($scope, $element) {
-          $timeout(function() {
-            $element[0].focus();
-          });
-        }
-      }
-    }
-  ]);
