@@ -1059,11 +1059,6 @@ angular.module('copayApp.controllers').controller('indexController', function($r
     }, cb);
   });
 
-  $rootScope.$on('Local/BWSUpdated', function(event) {
-    profileService.applyConfig();
-    storageService.setCleanAndScanAddresses(function() {});
-  });
-
   $rootScope.$on('Local/WalletCompleted', function(event) {
     self.setFocusedWallet();
     go.walletHome();
