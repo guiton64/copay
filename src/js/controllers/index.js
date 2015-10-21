@@ -404,46 +404,7 @@ angular.module('copayApp.controllers').controller('indexController', function($r
     });
   };
 
-  self.updateTxHistory = function(skip) {
-    var fc = profileService.focusedClient;
-    if (!fc || !fc.isComplete()) return;
-    if (!skip) {
-      self.txHistory = [];
-      self.txHistoryUnique = {};
-    }
-    self.skipHistory = skip || 0;
-    $log.debug('Updating Transaction History');
-    self.txHistoryError = false;
-    self.updatingTxHistory = true;
-    self.txHistoryPaging = false;
 
-    $timeout(function() {
-      fc.getTxHistory({
-        skip: self.skipHistory,
-        limit: self.limitHistory + 1
-      }, function(err, txs) {
-        self.updatingTxHistory = false;
-        if (err) {
-          $log.debug('TxHistory ERROR:', err);
-          // We do not should errors here, since history is usually
-          // fetched AFTER others requests (if skip=0)
-          if (skip)
-            self.handleError(err);
-
-          self.txHistoryError = true;
-        } else {
-          $log.debug('Wallet Transaction History:', txs);
-          self.skipHistory = self.skipHistory + self.limitHistory;
-          self.setTxHistory(txs);
-        }
-        $rootScope.$apply();
-      });
-    });
-  };
-
-  self.debouncedUpdateHistory = lodash.throttle(function() {
-    self.updateTxHistory();
-  }, 5000);
 
   // This handles errors from BWS/index with are nomally
   // trigger from async events (like updates)
@@ -461,6 +422,7 @@ angular.module('copayApp.controllers').controller('indexController', function($r
       self.showErrorPopup(msg);
     }
   };
+
   self.openWallet = function() {
     var fc = profileService.focusedClient;
     $timeout(function() {
@@ -525,9 +487,10 @@ angular.module('copayApp.controllers').controller('indexController', function($r
   var SAFE_CONFIRMATIONS = 6;
 
   self.setTxHistory = function(txs) {
+    console.log(txs);
+    self.txHistoryUnique = {};
     var config = configService.getSync().wallet.settings;
     var now = Math.floor(Date.now() / 1000);
-    var c = 0;
 
     self.hasUnsafeConfirmed = false;
     lodash.each(txs, function(tx) {
@@ -543,15 +506,12 @@ angular.module('copayApp.controllers').controller('indexController', function($r
         tx.safeConfirmed = false;
         self.hasUnsafeConfirmed = true;
       }
-
-      if (c < self.limitHistory) {
-        if (!self.txHistoryUnique[tx.txid]) {
-          self.txHistory.push(tx);
-          self.txHistoryUnique[tx.txid] = true;
-          c++;
-        } else {
-          $log.debug('Ignoring duplicate TX in history: ' + tx.txid)
-        }
+      console.log(self.txHistoryUnique[tx.txid]);
+      if (!self.txHistoryUnique[tx.txid]) {
+        self.txHistory.push(tx);
+        self.txHistoryUnique[tx.txid] = true;
+      } else {
+        $log.debug('Ignoring duplicate TX in history: ' + tx.txid)
       }
     });
   };
@@ -693,19 +653,17 @@ angular.module('copayApp.controllers').controller('indexController', function($r
 
     var unique = {};
 
-    function getHistory(skip, cb) {
+    function getHistory(cb) {
       storageService.getTxHistory(c.walletId, function(err, txs) {
         if (err) return cb(err);
-        // <<<<<<< HEAD
-
-        // var txsFromLocal;
-        // try {
-        //   txsFromLocal = JSON.parse(txs);
-        // } catch (ex) {
-        //   return cb(ex);
-        // =======
+        var txsFromLocal;
+        try {
+          txsFromLocal = JSON.parse(txs);
+        } catch (ex) {
+          return cb(ex);
+        }
         if (txs && txs.length > 0) {
-          lodash.each(txs, function(tx) {
+          lodash.each(txsFromLocal, function(tx) {
             if (!unique[tx.txid]) {
               allTxs.push(tx);
               unique[tx.txid] = 1;
@@ -714,13 +672,7 @@ angular.module('copayApp.controllers').controller('indexController', function($r
               console.log("Ignoring duplicate TX in CSV: " + tx.txid);
             }
           });
-          return getHistory(skip + step, cb);
-        } else {
-          return cb(null, lodash.flatten(allTxs));
-          // >>>>>>> exclude duplicated TXID in CSV
         }
-
-        allTxs.push(txsFromLocal);
         return cb(null, lodash.flatten(allTxs));
       });
     }
@@ -805,7 +757,6 @@ angular.module('copayApp.controllers').controller('indexController', function($r
     var fc = profileService.focusedClient;
     var c = fc.credentials;
     var txsToPush = [];
-
     storageService.getTxHistory(c.walletId, function(err, txs) {
       if (err) return cb(err);
 
@@ -851,31 +802,31 @@ angular.module('copayApp.controllers').controller('indexController', function($r
 
       if (!txsFromBWC[0]) {
         skipLoop = true;
-        $log.debug('There is not transactions stored');
       }
-
       lodash.each(txsFromBWC, function(t) {
         if (!localTx[0]) txsToPush.push(t);
         else {
-          if (!self.areEqualsTxs(t, localTx[0]) && !skipLoop) {
-            txsToPush.push(t);
+          if (!self.areEqualsTxs(t, localTx[0])) {
+            if (!skipLoop)
+              txsToPush.push(t);
           } else {
             skipLoop = true;
           }
         }
       });
+      console.log("transactions to push : ", txsToPush);
       self.skipHistory = self.skipHistory + self.limitHistory;
       return cb(null, skipLoop, txsToPush);
     });
   }
 
-  self.updateTxHistory = function(skip) {
+  self.updateTxHistory = function() {
     $log.debug('Updating Transaction History');
-    self.skipHistory = skip || 0;
+    self.skipHistory = 0;
+    self.txHistoryUnique = {};
     self.txHistoryError = false;
     self.updatingTxHistory = true;
     self.txHistoryPaging = false;
-
     $timeout(function() {
       self.updateLocalTxHistory(function(err) {
         if (err) self.txHistoryError = true;
