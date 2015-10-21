@@ -640,15 +640,33 @@ angular.module('copayApp.controllers').controller('indexController', function($r
 
     var step = 6;
 
+    var unique = {};
+
     function getHistory(skip, cb) {
       storageService.getTxHistory(c.walletId, function(err, txs) {
         if (err) return cb(err);
+        // <<<<<<< HEAD
 
-        var txsFromLocal;
-        try {
-          txsFromLocal = JSON.parse(txs);
-        } catch (ex) {
-          return cb(ex);
+        // var txsFromLocal;
+        // try {
+        //   txsFromLocal = JSON.parse(txs);
+        // } catch (ex) {
+        //   return cb(ex);
+        // =======
+        if (txs && txs.length > 0) {
+          lodash.each(txs, function(tx) {
+            if (!unique[tx.txid]) {
+              allTxs.push(tx);
+              unique[tx.txid] = 1;
+              console.log("Got:" + lodash.keys(unique).length + " txs");
+            } else {
+              console.log("Ignoring Duplicate TX:", tx.txid);
+            }
+          });
+          return getHistory(skip + step, cb);
+        } else {
+          return cb(null, lodash.flatten(allTxs));
+          // >>>>>>> exclude duplicated TXID in CSV
         }
 
         allTxs.push(txsFromLocal);
