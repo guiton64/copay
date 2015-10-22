@@ -511,6 +511,7 @@ angular.module('copayApp.controllers').controller('indexController', function($r
         $log.debug('Ignoring duplicate TX in history: ' + tx.txid)
       }
     });
+
   };
 
   self.updateAlias = function() {
