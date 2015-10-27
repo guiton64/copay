@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('copayApp.controllers').controller('preferencesController',
-  function($scope, $rootScope, $filter, $timeout, $modal, $log, lodash, configService, profileService, uxLanguage) {
-    
+  function($scope, $rootScope, $filter, $timeout, $modal, $log, $state, lodash, configService, profileService, uxLanguage) {
+
     this.init = function() {
       var config = configService.getSync();
       this.unitName = config.wallet.settings.unitName;
@@ -11,7 +11,7 @@ angular.module('copayApp.controllers').controller('preferencesController',
       this.selectedAlternative = {
         name: config.wallet.settings.alternativeName,
         isoCode: config.wallet.settings.alternativeIsoCode
-      }; 
+      };
       $scope.spendUnconfirmed = config.wallet.spendUnconfirmed;
       $scope.glideraEnabled = config.glidera.enabled;
       $scope.glideraTestnet = config.glidera.testnet;
@@ -29,6 +29,17 @@ angular.module('copayApp.controllers').controller('preferencesController',
         config.touchIdFor = config.touchIdFor || {};
         $scope.touchid = config.touchIdFor[walletId];
       }
+    };
+
+    this.passwordRequest = function() {
+      profileService.unlockFC(function(err) {
+        if (err) {
+          self.error = 'Could not decrypt';
+          $log.warn('Error decrypting credentials:', self.error); //TODO
+          return;
+        }
+        $state.go('backup');
+      });
     };
 
     var unwatchSpendUnconfirmed = $scope.$watch('spendUnconfirmed', function(newVal, oldVal) {
@@ -59,8 +70,8 @@ angular.module('copayApp.controllers').controller('preferencesController',
           });
         });
       } else {
-        if (!val && fc.hasPrivKeyEncrypted())  {
-          profileService.unlockFC(function(err){
+        if (!val && fc.hasPrivKeyEncrypted()) {
+          profileService.unlockFC(function(err) {
             if (err) {
               $scope.encrypt = true;
               return;
@@ -117,14 +128,13 @@ angular.module('copayApp.controllers').controller('preferencesController',
       opts.touchIdFor[walletId] = newVal;
 
       $rootScope.$emit('Local/RequestTouchid', function(err) {
-        if (err) { 
+        if (err) {
           $log.debug(err);
           $timeout(function() {
             $scope.touchidError = true;
             $scope.touchid = oldVal;
           }, 100);
-        }
-        else {
+        } else {
           configService.set(opts, function(err) {
             if (err) {
               $log.debug(err);

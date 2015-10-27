@@ -12,10 +12,10 @@ angular.module('copayApp.controllers').controller('wordsController',
     this.toggle = function() {
       this.show = !this.show;
 
-      if (this.show) 
+      if (this.show)
         $rootScope.$emit('Local/BackupDone');
 
-      $timeout(function(){
+      $timeout(function() {
         $scope.$apply();
       }, 1);
     };
@@ -54,19 +54,13 @@ angular.module('copayApp.controllers').controller('wordsController',
       if (e.message && e.message.match(/encrypted/) && fc.isPrivKeyEncrypted()) {
         self.credentialsEncrypted = true;
 
-        $timeout(function(){
+        $timeout(function() {
           $scope.$apply();
         }, 1);
 
-        profileService.unlockFC(function(err) {
-          if (err) {
-            self.error = bwsError.msg(err, gettext('Could not decrypt'));
-            $log.warn('Error decrypting credentials:',self.error); //TODO
-            return;
-          }
-          self.credentialsEncrypted = false;
-          setWords(fc.getMnemonic());
-        });
-      } 
+
+        self.credentialsEncrypted = false;
+        setWords(fc.getMnemonic());
+      }
     }
   });

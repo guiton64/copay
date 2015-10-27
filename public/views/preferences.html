@@ -47,7 +47,7 @@
 
     <h4>
     </h4>
-    <li ng-click="$root.go('backup')"  ng-hide="index.isPrivKeyExternal">
+    <li ng-click="encrypt  ? preferences.passwordRequest() : $root.go('backup') "  ng-hide="index.isPrivKeyExternal">
       <div class="right text-gray">
         <span class="text-warning" ng-show="index.needsBackup">
           <i class="fi-alert"></i><span translate>Still not done</span>
