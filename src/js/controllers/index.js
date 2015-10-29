@@ -760,6 +760,7 @@ angular.module('copayApp.controllers').controller('indexController', function($r
       } catch (ex) {
         $log.warn(ex);
       }
+      if (!localTxs) self.showWaitingSign = true;
 
       return cb(null, self.removeSoftConfirmedTx(localTxs));
     });
@@ -768,7 +769,6 @@ angular.module('copayApp.controllers').controller('indexController', function($r
   self.updateLocalTxHistory = function(cb) {
     self.getConfirmedTxs(function(err, txsFromLocal) {
       if (err) return cb(err);
-
       var fc = profileService.focusedClient;
       var c = fc.credentials;
       fillTxsObject();
@@ -825,11 +825,11 @@ angular.module('copayApp.controllers').controller('indexController', function($r
     $log.debug('Updating Transaction History');
     self.txHistoryError = false;
     self.updatingTxHistory = true;
-
     $timeout(function() {
       self.updateLocalTxHistory(function(err) {
         if (err) self.txHistoryError = true;
         self.updatingTxHistory = false;
+        self.showWaitingSign = false;
         $rootScope.$apply();
       });
     });
