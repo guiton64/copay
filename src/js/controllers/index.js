@@ -1286,6 +1286,14 @@ angular.module('copayApp.controllers').controller('indexController', function($r
     go.walletHome();
   });
 
+  $rootScope.$on('Local/NewDefaultSettingUpdated', function(event) {
+    self.updateRemotePreferences({
+      saveAll: true
+    }, function() {
+      $log.debug('Remote preferences saved')
+    });
+  });
+
   $rootScope.$on('Local/SubscribeNotifications', function(event) {
     if (!self.usePushNotifications) return;
 
