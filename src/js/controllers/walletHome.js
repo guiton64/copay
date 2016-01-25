@@ -286,7 +286,7 @@ angular.module('copayApp.controllers').controller('walletHomeController', functi
         $rootScope.$on(eventName, function() {
           fc.getTx($scope.tx.id, function(err, tx) {
             if (err) {
-              if (err.message && err.message == 'TX_NOT_FOUND' &&
+              if (err.name && err.name == 'TX_NOT_FOUND' &&
                 (eventName == 'transactionProposalRemoved' || eventName == 'TxProposalRemoved')) {
                 $scope.tx.removed = true;
                 $scope.tx.canBeRemoved = false;
