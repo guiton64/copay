@@ -782,6 +782,27 @@ table tbody tr:last-child td {
   border-bottom: none;
 }
 
+/*////////////////////////////   SEARCH INPUT  ////////////////////////////*/
+
+.left-inner-addon1 {
+    position: relative;
+}
+.left-inner-addon1 input{
+    padding-left: 40px;
+    margin-bottom: auto;
+    border: 0px solid;
+}
+.left-inner-addon1 i{
+    padding: 6px;
+    padding-left: 20px;
+}
+.left-inner-addon2 i{
+    padding: 2px;
+    padding-left: 5px;
+}
+.fi-magnifying-glass {
+    position: absolute;
+}
 
 /*////////////////////////////  BUTTON OUTLINE  ////////////////////////////*/
 

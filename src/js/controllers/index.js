@@ -13,6 +13,8 @@ angular.module('copayApp.controllers').controller('indexController', function($r
   self.historyShowLimit = 10;
   self.updatingTxHistory = {};
   self.prevState = 'walletHome';
+  self.isSearching = false;
+  self.showOptions = true;
 
   function strip(number) {
     return (parseFloat(number.toPrecision(12)));
@@ -948,6 +950,39 @@ angular.module('copayApp.controllers').controller('indexController', function($r
     }, 100);
   };
 
+  self.hideHistory = function() {
+    if (!self.historyShowShowAll) {
+      self.txHistory = self.txHistory.slice(0, 10);
+      self.historyShowShowAll = true;
+    }
+  };
+
+  self.filter = function(search) {
+    self.showOptions = true;
+
+    function formatDate(date) {
+      var day = ('0' + date.getDate()).slice(-2).toString();
+      var month = ('0' + (date.getMonth() + 1)).slice(-2).toString();
+      var year = date.getFullYear();
+      return [month, day, year].join('/');
+    };
+
+    if (lodash.isEmpty(search)) {
+      self.result = [];
+      return;
+    }
+    self.result = lodash.filter(self.txHistory, function(tx) {
+      return lodash.includes(tx.amountStr, search) ||
+        lodash.includes(tx.message, search) ||
+        lodash.includes(self.addressbook ? self.addressbook[tx.addressTo] : null, search) ||
+        lodash.includes(tx.addressTo, search) ||
+        lodash.isEqual(formatDate(new Date(tx.time * 1000)), search);
+    });
+    if (isCordova)
+      window.plugins.toast.showShortBottom(gettextCatalog.getString('Matches: ' + self.result.length));
+    self.showOptions = (self.result.length == 0) ? true : false;
+  };
+
   self.getTxsFromServer = function(client, skip, endingTxid, limit, cb) {
     var res = [];
 
@@ -1197,6 +1232,13 @@ angular.module('copayApp.controllers').controller('indexController', function($r
 
   $rootScope.$on('Local/AddressbookUpdated', function(event, ab) {
     self.setAddressbook(ab);
+  });
+
+  $rootScope.$on('Local/Searching', function(event, val) {
+    if (val) self.showAllHistory();
+    else self.hideHistory();
+    self.isSearching = val;
+    self.showOptions = true;
   });
 
   // UX event handlers
@@ -1462,7 +1504,7 @@ angular.module('copayApp.controllers').controller('indexController', function($r
 
   $rootScope.$on('Local/NeedsConfirmation', function(event, txp, cb) {
     self.confirmTx = {
-      txp : txFormatService.processTx(txp),
+      txp: txFormatService.processTx(txp),
       callback: function(accept) {
         self.confirmTx = null;
         return cb(accept);

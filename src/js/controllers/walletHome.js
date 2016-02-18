@@ -28,6 +28,20 @@ angular.module('copayApp.controllers').controller('walletHomeController', functi
   this.addr = {};
   this.lockedCurrentFeePerKb = null;
 
+  self.isSearching = false;
+  $rootScope.$emit('Local/Searching', false);
+
+  self.searchInput = function() {
+    self.isSearching = true;
+    $rootScope.$emit('Local/Searching', true);
+  }
+
+  self.cancelSearch = function() {
+    self.isSearching = false;
+    $scope.search = '';
+    $rootScope.$emit('Local/Searching', false);
+  }
+
   var disableScannerListener = $rootScope.$on('dataScanned', function(event, data) {
     self.setForm(data);
     $rootScope.$emit('Local/SetTab', 'send');
@@ -53,6 +67,7 @@ angular.module('copayApp.controllers').controller('walletHomeController', functi
   var disableFocusListener = $rootScope.$on('Local/NewFocusedWallet', function() {
     self.addr = {};
     self.resetForm();
+    self.cancelSearch();
   });
 
   var disableResumeListener = $rootScope.$on('Local/Resume', function() {
@@ -673,7 +688,7 @@ angular.module('copayApp.controllers').controller('walletHomeController', functi
     if (isCordova && !this.isWindowsPhoneApp) {
       this.hideMenuBar(what);
     }
-    
+
     var self = this;
     if (isCordova && !this.isWindowsPhoneApp && what == 'address') {
       getClipboard(function(value) {
@@ -839,7 +854,7 @@ angular.module('copayApp.controllers').controller('walletHomeController', functi
       amount = parseInt((form.amount.$modelValue * unitToSat).toFixed(0));
 
       outputs.push({
-        'toAddress' : address,
+        'toAddress': address,
         'amount': amount,
         'message': comment
       });
@@ -869,7 +884,7 @@ angular.module('copayApp.controllers').controller('walletHomeController', functi
           });
           return;
         } else {
-          $rootScope.$emit('Local/NeedsConfirmation', txp,  function(accept) {
+          $rootScope.$emit('Local/NeedsConfirmation', txp, function(accept) {
             if (accept) self.acceptTx(txp);
             else self.resetForm();
           });
@@ -877,7 +892,7 @@ angular.module('copayApp.controllers').controller('walletHomeController', functi
       });
 
     }, 100);
-  }; 
+  };
 
   this.acceptTx = function(txp) {
     var self = this;
@@ -975,7 +990,7 @@ angular.module('copayApp.controllers').controller('walletHomeController', functi
     $timeout(function() {
       $rootScope.$digest();
     }, 1);
-  }; 
+  };
 
   this.openPPModal = function(paypro) {
     $rootScope.modalOpened = true;
