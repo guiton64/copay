@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('copayApp.controllers').controller('walletHomeController', function($scope, $ionicScrollDelegate, $ionicModal, $rootScope, $interval, $timeout, $filter, $modal, $log, notification, txStatus, profileService, lodash, configService, rateService, storageService, bitcore, gettext, gettextCatalog, platformInfo, addressService, ledger, bwsError, confirmDialog, txFormatService, animationService, addressbookService, go, feeService, walletService, fingerprintService, nodeWebkit) {
+angular.module('copayApp.controllers').controller('walletHomeController', function($scope, $ionicScrollDelegate, $ionicSideMenuDelegate, $ionicModal, $rootScope, $interval, $timeout, $filter, $modal, $log, notification, txStatus, profileService, lodash, configService, rateService, storageService, bitcore, gettext, gettextCatalog, platformInfo, addressService, ledger, bwsError, confirmDialog, txFormatService, animationService, addressbookService, go, feeService, walletService, fingerprintService, nodeWebkit) {
 
   var isCordova = platformInfo.isCordova;
   var isWP = platformInfo.isWP;
@@ -34,10 +34,27 @@ angular.module('copayApp.controllers').controller('walletHomeController', functi
 
   $scope.getScrollPosition = function() {
     $scope.shouldCollapse = $ionicScrollDelegate.$getByHandle('transactions').getScrollPosition().top > 50;
+
     $timeout(function() {
       $scope.$apply();
     });
-  }
+  };
+
+  $scope.freezeScroll = function() {
+
+    if ($ionicScrollDelegate.$getByHandle('balance').getScrollPosition().top < -75) {
+      $ionicScrollDelegate.$getByHandle('balance').freezeScroll(true);
+      return;
+    }
+    if ($ionicSideMenuDelegate.getOpenRatio() != 0)
+      $ionicScrollDelegate.$getByHandle('balance').freezeScroll(true);
+    else
+      $ionicScrollDelegate.$getByHandle('balance').freezeScroll(false);
+
+    $timeout(function() {
+      $scope.$apply();
+    });
+  };
 
   var disableScannerListener = $rootScope.$on('dataScanned', function(event, data) {
     self.setForm(data);
