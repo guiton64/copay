@@ -1153,16 +1153,12 @@ angular.module('copayApp.controllers').controller('indexController', function($r
     });
   };
 
-  self.openMenu = function() {
+  self.toggleLeftMenu = function() {
     profileService.isDisclaimerAccepted(function(val) {
-      if (val) go.swipe(true);
+      if (val) go.toggleLeftMenu();
       else
         $log.debug('Disclaimer not accepted, cannot open menu');
     });
-  };
-
-  self.closeMenu = function() {
-    go.swipe();
   };
 
   self.retryScan = function() {
