@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('copayApp.controllers').controller('indexController', function($rootScope, $scope, $log, $filter, $timeout, $ionicScrollDelegate, latestReleaseService, bwcService, pushNotificationsService, lodash, go, profileService, configService, isCordova, rateService, storageService, addressService, gettext, gettextCatalog, amMoment, nodeWebkit, addonManager, isChromeApp, bwsError, txFormatService, uxLanguage, $state, glideraService, coinbaseService, isMobile, addressbookService, walletService) {
+angular.module('copayApp.controllers').controller('indexController', function($rootScope, $scope, $log, $filter, $timeout, $ionicScrollDelegate,  latestReleaseService, bwcService, pushNotificationsService, lodash, go, profileService, configService, isCordova, rateService, storageService, addressService, gettext, gettextCatalog, amMoment, nodeWebkit, addonManager, isChromeApp, bwsError, txFormatService, uxLanguage, glideraService, coinbaseService, isMobile, addressbookService, walletService) {
+
   var self = this;
   var SOFT_CONFIRMATION_LIMIT = 12;
   var errors = bwcService.getErrors();
@@ -170,7 +171,7 @@ angular.module('copayApp.controllers').controller('indexController', function($r
         $log.debug('Wallet not complete BEFORE update... redirecting');
         go.path('copayers');
       } else {
-        if ($state.is('copayers')) {
+        if (go.is('copayers')) {
           $log.debug('Wallet Complete BEFORE update... redirect to home');
           go.walletHome();
         }
@@ -183,7 +184,7 @@ angular.module('copayApp.controllers').controller('indexController', function($r
             $log.debug('Wallet not complete after update... redirecting');
             go.path('copayers');
           } else {
-            if ($state.is('copayers')) {
+            if (go.is('copayers')) {
               $log.debug('Wallet Complete after update... redirect to home');
               go.walletHome();
             }
@@ -225,7 +226,7 @@ angular.module('copayApp.controllers').controller('indexController', function($r
       }, 300);
     }
 
-    if (!self.tab || !$state.is('walletHome'))
+    if (!self.tab || go.is('walletHome'))
       self.tab = 'walletHome';
 
     var changeTab = function() {
@@ -249,7 +250,7 @@ angular.module('copayApp.controllers').controller('indexController', function($r
       $rootScope.$emit('Local/TabChanged', tab);
     };
 
-    if (switchState && !$state.is('walletHome')) {
+    if (switchState && go.is('walletHome')) {
       go.path('walletHome', function() {
         changeTab();
       });

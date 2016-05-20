@@ -95,6 +95,7 @@ angular.module('copayApp.controllers').controller('createController',
         myName: $scope.totalCopayers > 1 ? $scope.myName : null,
         networkName: $scope.testnetEnabled ? 'testnet' : 'livenet',
         bwsurl: $scope.bwsurl,
+        walletPrivKey: $scope._walletPrivKey, // Only for testing
       };
       var setSeed = self.seedSourceId == 'set';
       if (setSeed) {
@@ -158,6 +159,7 @@ angular.module('copayApp.controllers').controller('createController',
     this._create = function(opts) {
       self.loading = true;
       $timeout(function() {
+
         profileService.createWallet(opts, function(err, walletId) {
           self.loading = false;
           if (err) {
