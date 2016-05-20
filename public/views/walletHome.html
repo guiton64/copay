@@ -106,7 +106,6 @@
 
         <div class="m50b">
           <div class="oh pr m20t" ng-show="index.notAuthorized && !index.anyOnGoingProcess">
-
             <div class="text-center text-warning">
               <i class="fi-alert"></i>
               <span translate>
@@ -122,6 +121,16 @@
                 <span translate>Recreate</span>
               </span>
             </div>
+          </div>
+
+          <div class="oh pr m20t" ng-show="index.incorrectDerivation">
+            <div class="text-center text-warning">
+              <i class="fi-alert"></i>
+              <span translate>
+                WARNING: Key derivation is not working on this device/wallet. Actions cannot be performed on this wallet.
+              </span>
+            </div>
+
           </div>
 
           <div class="release size-12" ng-show="newRelease" ng-click="$root.openExternalLink('https://github.com/bitpay/copay/releases/latest')">
