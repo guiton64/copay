@@ -33,6 +33,7 @@ angular.module('copayApp.controllers').controller('walletHomeController', functi
   var vanillaScope = ret;
 
   $scope.freezeScroll = function() {
+
     var openRatio = $ionicSideMenuDelegate.getOpenRatio();
 
     if (openRatio != 0)
