@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('copayApp.controllers').controller('indexController', function($rootScope, $scope, $log, $filter, $timeout, latestReleaseService, bwcService, pushNotificationsService, lodash, go, profileService, configService, isCordova, rateService, storageService, addressService, gettext, gettextCatalog, amMoment, nodeWebkit, addonManager, isChromeApp, bwsError, txFormatService, uxLanguage, glideraService, coinbaseService, isMobile, addressbookService, walletService) {
+angular.module('copayApp.controllers').controller('indexController', function($rootScope, $scope, $log, $filter, $timeout, $ionicScrollDelegate, latestReleaseService, bwcService, pushNotificationsService, lodash, go, profileService, configService, isCordova, rateService, storageService, addressService, gettext, gettextCatalog, amMoment, nodeWebkit, addonManager, isChromeApp, bwsError, txFormatService, uxLanguage, glideraService, coinbaseService, isMobile, addressbookService, walletService) {
   var self = this;
   var SOFT_CONFIRMATION_LIMIT = 12;
   var errors = bwcService.getErrors();
@@ -965,9 +965,8 @@ angular.module('copayApp.controllers').controller('indexController', function($r
           self.historyShowMore = false;
       } else {
         self.txHistory = self.completeHistory.slice(0, self.nextTxHistory);
-        self.txHistorySearchResults = self.txHistory;
-        $log.debug('Total txs: ', self.txHistorySearchResults.length + '/' + self.completeHistory.length);
-        if (self.txHistorySearchResults.length >= self.completeHistory.length)
+        $log.debug('Total txs: ', self.txHistory.length + '/' + self.completeHistory.length);
+        if (self.txHistory.length >= self.completeHistory.length)
           self.historyShowMore = false;
       }
       self.nextTxHistory += self.historyShowMoreLimit;
@@ -994,6 +993,7 @@ angular.module('copayApp.controllers').controller('indexController', function($r
     if (isCordova)
       window.plugins.toast.hide();
     self.throttleSearch();
+    $ionicScrollDelegate.resize();
   }
 
   self.throttleSearch = lodash.throttle(function() {
@@ -1096,7 +1096,6 @@ angular.module('copayApp.controllers').controller('indexController', function($r
     self.isSearching = false;
     self.nextTxHistory = self.historyShowMoreLimit;
     self.txHistory = self.completeHistory ? self.completeHistory.slice(0, self.historyShowLimit) : null;
-    self.txHistorySearchResults = self.txHistory;
     self.historyShowMore = self.completeHistory ? self.completeHistory.length > self.historyShowLimit : null;
   };
 
