@@ -226,7 +226,7 @@ angular.module('copayApp.controllers').controller('indexController', function($r
       }, 300);
     }
 
-    if (!self.tab || go.is('walletHome'))
+    if (!self.tab || !go.is('walletHome'))
       self.tab = 'walletHome';
 
     var changeTab = function() {
@@ -250,7 +250,7 @@ angular.module('copayApp.controllers').controller('indexController', function($r
       $rootScope.$emit('Local/TabChanged', tab);
     };
 
-    if (switchState && go.is('walletHome')) {
+    if (switchState && !go.is('walletHome')) {
       go.path('walletHome', function() {
         changeTab();
       });
