@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('copayApp.controllers').controller('joinController',
-  function($scope, $rootScope, $timeout, go, notification, profileService, configService, isCordova, storageService, applicationService, $modal, gettext, lodash, ledger, trezor, isChromeApp, isDevel,derivationPathHelper) {
+  function($scope, $rootScope, $timeout, $ionicScrollDelegate, go, notification, profileService, configService, isCordova, storageService, applicationService, $modal, gettext, lodash, ledger, trezor, isChromeApp, isDevel,derivationPathHelper) {
 
     var self = this;
     var defaults = configService.getDefaults();
@@ -14,7 +14,6 @@ angular.module('copayApp.controllers').controller('joinController',
       $scope.joinForm.secret.$setViewValue(data);
       $scope.joinForm.secret.$render();
     };
-
 
     var updateSeedSourceSelect = function() {
       self.seedOptions = [{
@@ -53,6 +52,7 @@ angular.module('copayApp.controllers').controller('joinController',
     this.join = function(form) {
       if (form && form.$invalid) {
         self.error = gettext('Please enter the required fields');
+        $ionicScrollDelegate.scrollTop();
         return;
       }
 
@@ -75,6 +75,7 @@ angular.module('copayApp.controllers').controller('joinController',
         var pathData = derivationPathHelper.parse($scope.derivationPath);
         if (!pathData) {
           this.error = gettext('Invalid derivation path');
+          $ionicScrollDelegate.scrollTop();
           return;
         }
         opts.account = pathData.account;
@@ -88,6 +89,7 @@ angular.module('copayApp.controllers').controller('joinController',
       if (setSeed && !opts.mnemonic && !opts.extendedPrivateKey) {
 
         this.error = gettext('Please enter the wallet recovery phrase');
+        $ionicScrollDelegate.scrollTop();
         return;
       }
 
@@ -95,7 +97,7 @@ angular.module('copayApp.controllers').controller('joinController',
         var account = $scope.account;
         if (!account || account < 1) {
           this.error = gettext('Invalid account number');
-
+          $ionicScrollDelegate.scrollTop();
           return;
         }
 
@@ -110,6 +112,7 @@ angular.module('copayApp.controllers').controller('joinController',
           self.hwWallet = false;
           if (err) {
             self.error = err;
+            $ionicScrollDelegate.scrollTop();
             $scope.$apply();
             return;
           }
@@ -129,6 +132,7 @@ angular.module('copayApp.controllers').controller('joinController',
           if (err) {
             self.loading = false;
             self.error = err;
+            $ionicScrollDelegate.scrollTop();
             $rootScope.$apply();
             return;
           }
