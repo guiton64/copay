@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('copayApp.controllers').controller('createController',
-  function($scope, $location, $anchorScroll, $rootScope, $timeout, $log, lodash, go, profileService, configService, isCordova, gettext, ledger, trezor, isMobile, isChromeApp, isDevel, derivationPathHelper) {
+  function($scope, $ionicScrollDelegate, $rootScope, $timeout, $log, lodash, go, profileService, configService, isCordova, gettext, ledger, trezor, isMobile, isChromeApp, isDevel, derivationPathHelper) {
 
     var self = this;
     var defaults = configService.getDefaults();
@@ -85,6 +85,7 @@ angular.module('copayApp.controllers').controller('createController',
     this.create = function(form) {
       if (form && form.$invalid) {
         this.error = gettext('Please enter the required fields');
+        $ionicScrollDelegate.scrollTop();
         return;
       }
 
@@ -111,6 +112,7 @@ angular.module('copayApp.controllers').controller('createController',
         var pathData = derivationPathHelper.parse($scope.derivationPath);
         if (!pathData) {
           this.error = gettext('Invalid derivation path');
+          $ionicScrollDelegate.scrollTop();
           return;
         }
 
@@ -124,6 +126,7 @@ angular.module('copayApp.controllers').controller('createController',
 
       if (setSeed && !opts.mnemonic && !opts.extendedPrivateKey) {
         this.error = gettext('Please enter the wallet recovery phrase');
+        $ionicScrollDelegate.scrollTop();
         return;
       }
 
@@ -131,6 +134,7 @@ angular.module('copayApp.controllers').controller('createController',
         var account = $scope.account;
         if (!account || account < 1) {
           this.error = gettext('Invalid account number');
+          $ionicScrollDelegate.scrollTop();
           return;
         }
 
@@ -145,6 +149,7 @@ angular.module('copayApp.controllers').controller('createController',
           self.hwWallet = false;
           if (err) {
             self.error = err;
+            $ionicScrollDelegate.scrollTop();
             $scope.$apply();
             return;
           }
@@ -165,7 +170,7 @@ angular.module('copayApp.controllers').controller('createController',
           if (err) {
             $log.warn(err);
             self.error = err;
-            scrollUp('notification');
+            $ionicScrollDelegate.scrollTop();
             $timeout(function() {
               $rootScope.$apply();
             });
@@ -176,12 +181,6 @@ angular.module('copayApp.controllers').controller('createController',
         });
       }, 100);
     }
-
-    function scrollUp(location) {
-      if (!location) return;
-      $location.hash(location);
-      $anchorScroll();
-    };
 
     this.formFocus = function(what) {
       if (!this.isWindowsPhoneApp) return
