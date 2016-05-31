@@ -20,6 +20,10 @@
 	z-index: -1;
 }
 
+.popup-container.active .popup {
+	border-radius: 5px;
+}
+
 .bct {
  	background-color: transparent !important;
 	margin-top: -25px;
