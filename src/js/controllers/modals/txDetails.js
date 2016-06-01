@@ -18,33 +18,23 @@ angular.module('copayApp.controllers').controller('txDetailsController', functio
 
     // An elaborate, custom popup
     var commentPopup = $ionicPopup.show({
-      template: '<input type="text" ng-model="data.comment" autofocus>',
+      templateUrl: "views/includes/note.html",
       title: gettextCatalog.getString('Enter a new comment'),
       subTitle: gettextCatalog.getString('You can also edit after save'),
-      scope: $scope,
-      buttons: [
-        { // Array[Object] (optional). Buttons to place in the popup footer.
-          text: gettextCatalog.getString('Cancel'),
-          type: 'button-default',
-          onTap: function(e) {
-            return;
-          }
-        }, {
-          text: gettextCatalog.getString('Save'),
-          type: 'button-positive',
-          onTap: function(e) {
-            // Returning a value will cause the promise to resolve with the given value.
-            return $scope.data.comment;
-          }
-        }
-      ]
+      scope: $scope
     });
 
-    commentPopup.then(function(comment) {
+    $scope.data.close = function() {
+      commentPopup.close();
+    }
+
+    $scope.data.save = function() {
       if (!comment) return;
-      $scope.comment = comment;
+      $scope.comment = $scope.data.comment;
       $scope.editionTime = Math.floor(Date.now());
-    });
+      commentPopup.close();
+    }
+
   };
 
   $scope.getAlternativeAmount = function() {

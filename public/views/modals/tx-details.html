@@ -10,7 +10,7 @@
     </section>
   </nav>
 
-  <ion-content>
+  <ion-content ng-style="{'background-color': '#F6F7F9'}">
     <div class="modal-content">
       <div class="header-modal text-center" ng-init="getAlternativeAmount(btx)">
         <div ng-show="btx.action != 'invalid'">
@@ -128,8 +128,8 @@
         </li>
 
         <li class="p10 oh" ng-show="comment">
-          <span class="text-gray" translate>Comment</span>
-          <span class="right enable_text_select">{{comment}}</span><br>
+          <span class="text-gray" translate>Comment</span><br>
+          <span class="enable_text_select">{{comment}}</span><br>
           <div class="right text-italic text-gray size-12">
             <span translate>Edited by {{index.copayerName}}</span>
             <time>{{editionTime | amTimeAgo}}</time></span>
@@ -151,16 +151,18 @@
         </ul>
       </div>
 
-      <div ng-show="btx.txid" class="tx-details-blockchain">
-        <div class="text-center m20t">
-          <button class="button outline round dark-gray tiny" ng-click="$root.openExternalLink('https://' +
-            (getShortNetworkName() == 'test' ? 'test-' : '') + 'insight.bitpay.com/tx/' + btx.txid)">
-            <span class="text-gray" translate>See it on the blockchain</span>
-          </button>
-          <button class="button outline round dark-gray tiny" ng-click="showCommentPopup()">
-            <span class="text-gray" translate ng-show="!comment">Add a comment <i class="ion-ios-plus-outline"></i></span>
-            <span class="text-gray" translate ng-show="comment">Edit a comment <i class="ion-ios-compose-outline"></i></span>
-          </button>
+      <div ng-show="btx.txid" class="tx-details-blockchain m20t text-center">
+        <div class="small-6 columns">
+        <button class="button outline round dark-gray tiny" ng-click="$root.openExternalLink('https://' +
+          (getShortNetworkName() == 'test' ? 'test-' : '') + 'insight.bitpay.com/tx/' + btx.txid)">
+          <span class="text-gray" translate>See it on the blockchain</span>
+        </button>
+        </div>
+        <div class="small-6 columns">
+        <button class="button outline round dark-gray tiny" ng-click="showCommentPopup()">
+          <span class="text-gray" translate ng-show="!comment">Add a comment <i class="ion-ios-plus-outline"></i></span>
+          <span class="text-gray" translate ng-show="comment">Edit a comment <i class="ion-ios-compose-outline"></i></span>
+        </button>
         </div>
       </div>
     </div>
